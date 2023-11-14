@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useInterval } from 'react-interval-hook'
 import Modal from 'react-modal'
 import { Board } from './components/Board'
@@ -89,7 +89,7 @@ function App() {
   }, [direction, applePosition, stop])
 
 
-  const handleKey = useCallback((e: React.KeyboardEvent) => {
+  const handleKey = useCallback((e: KeyboardEvent) => {
     switch (e.key) {
       case 'ArrowUp':
         setDirection('up')
@@ -108,19 +108,23 @@ function App() {
     }
   }, [])
 
+  useEffect(() => {
+    document.addEventListener("keydown", handleKey, false);
+  }, [handleKey]);
+
   return (
     <>
       <div>
         <div>
           <span>score: {snake.length - 1}</span>
         </div>
-        <input
+        {/* <input
           type="text"
           onKeyDown={handleKey}
           // style={{ background: 'transparent', border: 'none !important', fontSize: 0 }}
           autoFocus
           tabIndex={-1}
-        />
+        /> */}
         <Board snake={snake} applePosition={applePosition} maxPosition={{y: MAX_ROWS, x: MAX_COLUMNS}}/>
       </div>
       <Modal
