@@ -74,10 +74,16 @@ function App() {
         prSnake[0].position.y === applePosition.y
       ) {
         console.log('apple eaten')
-        setApplePosition({
-          x: Math.floor(Math.random() * MAX_COLUMNS),
-          y: Math.floor(Math.random() * MAX_ROWS),
-        })
+        const newApplePosition = (): Position => {
+          const x = Math.floor(Math.random() * MAX_COLUMNS)
+          const y = Math.floor(Math.random() * MAX_ROWS)
+          const isSnake = [newHead, ...newBodies].some(
+            (s) => s.position.x === x && s.position.y === y
+          )
+          if (isSnake) return newApplePosition()
+          return { x, y }
+        }
+        setApplePosition(newApplePosition())
         return [newHead, ...newBodies]
       }
 
