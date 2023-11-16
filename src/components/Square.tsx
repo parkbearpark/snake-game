@@ -1,4 +1,4 @@
-import { type FC, useCallback } from 'react'
+import { FC, memo } from 'react'
 
 const STATUS_TABLE = {
   apple: 'red',
@@ -14,9 +14,7 @@ type Props = {
 }
 
 const Square: FC<Props> = ({ squareStatus }) => {
-  const squareColor = useCallback((s: SquareStatuses): SquareColors => {
-    return STATUS_TABLE[s]
-  }, [])
+  const squareColor = (s: SquareStatuses): SquareColors => STATUS_TABLE[s]
 
   return (
     <div
@@ -26,4 +24,6 @@ const Square: FC<Props> = ({ squareStatus }) => {
   )
 }
 
-export { Square, type SquareStatuses, type SquareColors }
+export default memo(Square, (prevProps, nextProps) => {
+  return prevProps.squareStatus === nextProps.squareStatus
+})
