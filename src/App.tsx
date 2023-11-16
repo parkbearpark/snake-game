@@ -20,8 +20,10 @@ const customStyles = {
   },
 }
 
+type directionType = 'up' | 'down' | 'left' | 'right'
+
 function App() {
-  const [direction, setDirection] = useState<'up' | 'down' | 'left' | 'right'>(
+  const [direction, setDirection] = useState<directionType>(
     'right'
   )
   const [snake, setSnake] = useState<SnakeSquare[]>([
@@ -88,7 +90,6 @@ function App() {
       }
 
       console.log('apple not eaten')
-      console.log(newHead.position.x < 0)
       const collided =
         newBodies.some((s, index) => {
           if (index === newBodies.length - 1) return false
@@ -113,22 +114,33 @@ function App() {
   }, [direction, applePosition, stop])
 
   const handleKey = useCallback((e: KeyboardEvent) => {
-    switch (e.key) {
-      case 'ArrowUp':
-        setDirection('up')
-        break
-      case 'ArrowDown':
-        setDirection('down')
-        break
-      case 'ArrowLeft':
-        setDirection('left')
-        break
-      case 'ArrowRight':
-        setDirection('right')
-        break
-      default:
-        break
+    const getDirection = (key: string, currentDirection: directionType) => {
+      switch (key) {
+        case 'ArrowUp':
+          return 'up'
+        case 'ArrowDown':
+          return 'down'
+        case 'ArrowLeft':
+          return 'left'
+        case 'ArrowRight':
+          return 'right'
+        default:
+          return currentDirection
+      }
     }
+
+    setDirection((prDirection) => {
+      const newDirection = getDirection(e.key, prDirection)
+      if (
+        (prDirection === 'up' && newDirection === 'down') ||
+        (prDirection === 'down' && newDirection === 'up') ||
+        (prDirection === 'left' && newDirection === 'right') ||
+        (prDirection === 'right' && newDirection === 'left')
+      ) {
+        return prDirection
+      }
+      return newDirection
+    })
   }, [])
 
   useEffect(() => {
@@ -141,13 +153,6 @@ function App() {
         <div>
           <span>score: {snake.length - 1}</span>
         </div>
-        {/* <input
-          type="text"
-          onKeyDown={handleKey}
-          // style={{ background: 'transparent', border: 'none !important', fontSize: 0 }}
-          autoFocus
-          tabIndex={-1}
-        /> */}
         <Board
           snake={snake}
           applePosition={applePosition}
